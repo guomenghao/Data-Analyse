@@ -21,9 +21,13 @@
 		values(#{ticket},#{user_id},sysdate,sysdate+1,sysdate,#{terminal_type},#{os_type},#{user_agent},#{login_ip},'10A',sysdate,sysdate)
 	</insert>
 	
-	<insert id="insertUserTicket_mysql" parameterType="java.lang.Object">
+	<!-- <insert id="insertUserTicket_mysql" parameterType="java.lang.Object">
 		insert into sys_user_ticket(ticket,user_id,eff_date,exp_date,login_date,terminal_type,os_type,user_agent,login_ip,state,state_date,crt_date)
 		values(#{ticket},#{user_id},now(),date_add(now(),interval 1 day),now(),#{terminal_type},#{os_type},#{user_agent},#{login_ip},'10A',now(),now())
+	</insert> -->
+	<insert id="insertUserTicket_mysql" parameterType="java.lang.Object">
+		insert into sys_user_ticket(ticket,user_id,eff_date,exp_date,login_date,terminal_type,os_type,user_agent,login_ip,state,state_date,crt_date)
+		values(#{ticket},#{user_id},sysdate,sysdate+1,sysdate,#{terminal_type},#{os_type},#{user_agent},#{login_ip},'10A',sysdate,sysdate)
 	</insert>
 	
 	<!-- 添加菜单功能项日志 -->

@@ -5,7 +5,7 @@
 	<properties>
 		<!-- 配置数据库选择器，变更数据类型时，除了这里需要修改外，还需要修改applicationContext文件中defaultSQLSessionFactory的xml文件路径 -->
 		<!-- oracle/mysql -->
-		<property name="dialect" value="mysql" />
+		<property name="dialect" value="oracle" />
 	</properties>
 	<settings>
 		<setting name="cacheEnabled" value="false"/>
