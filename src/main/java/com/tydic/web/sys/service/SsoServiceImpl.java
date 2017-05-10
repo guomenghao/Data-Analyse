@@ -210,7 +210,6 @@ public class SsoServiceImpl extends ServiceBase implements SsoService {
 		return ResultUtil.resultSuccess();
 	}
 
-	@Override
 	public IMapEntry<String, Object> getTicket4A(HttpServletRequest request, IMapEntry<String, Object> paramMap) {
 		IMapEntry<String, Object> data = this.selectOne("sys.sso.selectUserFor4A", paramMap);
 
