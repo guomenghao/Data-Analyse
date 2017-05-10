@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<properties>
+		<!-- 配置数据库选择器，变更数据类型时，除了这里需要修改外，还需要修改applicationContext文件中defaultSQLSessionFactory的xml文件路径 -->
+		<!-- oracle/mysql -->
+		<property name="dialect" value="mysql" />
+	</properties>
+	<settings>
+		<setting name="cacheEnabled" value="false"/>
+		<setting name="callSettersOnNulls" value="true"/>
+	</settings>
+	<!-- 解决空字符串insert mysql数据库 数字类型报错 Data truncated for column @吴健 -->
+	<typeHandlers>  
+	   <typeHandler handler="com.tydic.base.typehandler.mybatis.NullStringTypeHandler" javaType="java.lang.String"/>  
+	</typeHandlers>  
+	<plugins>
+		<plugin interceptor="com.tydic.base.interceptor.mybatis.PaginationInterceptor"></plugin>
+	</plugins>
+</configuration>

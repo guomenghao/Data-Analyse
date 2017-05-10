@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sys.bssorg">
+	<select id="selectBssOrgList" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select a.bss_org_id,a.bss_org_name,a.up_bss_org_id,a.area_id,b.area_name,a.bss_org_desc,a.bss_org_path,b.level_code
+		from sys_bss_org a,com_area b
+		where a.area_id=b.area_id and a.state='10A' and b.state='10A' 
+		<if test="bss_org_id != null and bss_org_id !=''">
+			and a.bss_org_id=#{bss_org_id}
+		</if>
+		
+		<if test="area_id != null and area_id !=''">
+			<if test="database_type == 'oracle'">
+				and b.area_path like (select area_path from com_area where area_id=#{area_id})||'%'
+			</if>
+			<if test="database_type == 'mysql'">
+				and b.area_path like concat((select area_path from com_area where area_id=#{area_id}),'%')
+			</if>
+		</if>
+		
+		<if test="_parameter.containsKey('bss_org_id_list')">
+			and a.bss_org_id in(
+			<foreach collection="bss_org_id_list" index="index" item="bss_org_id" open="" separator="," close="">
+					#{bss_org_id}
+			</foreach>
+			)
+		</if>
+		order by a.up_bss_org_id asc,b.area_name
+	</select>
+	
+	<select id="selectBssOrgUser" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select count(1) count 
+		from sys_user_job a,sys_bss_org b 
+		where a.bss_org_id=b.bss_org_id and a.state='10A' and b.state='10A'
+		<if test="database_type == 'oracle'">
+			and b.bss_org_path like #{bss_org_path}||'%'
+		</if>
+		<if test="database_type == 'mysql'">
+			and b.bss_org_path like concat(#{bss_org_path},'%')
+		</if>
+		
+	</select>
+	
+	<insert id="insertBssOrg" parameterType="java.lang.Object">
+		<selectKey keyProperty="bss_org_id_auto_id" resultType="long" order="BEFORE">  
+	            select seq_sys_bss_org_id.nextval from dual
+	    </selectKey>
+	    insert into sys_bss_org(bss_org_id,bss_org_name,bss_org_desc,up_bss_org_id,area_id,state,state_date,crt_date)
+		values(#{bss_org_id_auto_id},#{bss_org_name},#{bss_org_desc},#{up_bss_org_id},#{area_id},'10A',sysdate,sysdate)
+	</insert>
+	<insert id="insertBssOrg_mysql" parameterType="java.lang.Object">
+		insert into sys_bss_org(bss_org_name,bss_org_desc,up_bss_org_id,area_id,state,state_date,crt_date)
+		values(#{bss_org_name},#{bss_org_desc},#{up_bss_org_id},#{area_id},'10A',now(),now());
+		<selectKey keyProperty="bss_org_id_auto_id" resultType="long" order="AFTER">  
+            SELECT LAST_INSERT_ID();  
+        </selectKey>
+	</insert>
+	<update id="updateBssOrgPathByBssOrgId" parameterType="java.lang.Object">
+		update sys_bss_org a set a.bss_org_path = #{bss_org_path}
+		where a.bss_org_id=#{bss_org_id}
+	</update>
+	
+	
+	<update id="updateBssOrg" parameterType="java.lang.Object">
+			update sys_bss_org a
+			set a.state_date=${now_date}
+			<if test="bss_org_name != null and bss_org_name !=''">
+				,a.bss_org_name=#{bss_org_name}
+			</if>
+			<if test="area_id != null and area_id !=''">
+				,a.area_id=#{area_id}
+			</if>
+			<if test="_parameter.containsKey('up_bss_org_id')">
+				,a.up_bss_org_id = #{up_bss_org_id}
+			</if>
+			<if test="_parameter.containsKey('bss_org_desc')">
+				,a.bss_org_desc = #{bss_org_desc}
+			</if>
+			where a.bss_org_id=#{bss_org_id} and a.state='10A'
+	</update>
+	
+	<update id="updateBssOrgPath" parameterType="java.lang.Object">
+		update sys_bss_org a set a.bss_org_path = replace(a.bss_org_path,#{v_bss_org_path_current},#{v_bss_org_path_new})
+		where a.state='10A'
+		<if test="database_type == 'oracle'">
+			and a.bss_org_path like #{v_bss_org_path_current}||'%'
+		</if>
+		<if test="database_type == 'mysql'">
+			and a.bss_org_path like concat(#{v_bss_org_path_current},'%')
+		</if>
+	</update>
+	
+	<update id="delBssOrg" parameterType="java.lang.Object">
+		update sys_bss_org a
+		set a.state='10X', a.state_date=${now_date}
+		where a.state='10A' 
+		<if test="database_type == 'oracle'">
+			and a.bss_org_path like #{bss_org_path}||'%'
+		</if>
+		<if test="database_type == 'mysql'">
+			and a.bss_org_path like concat(#{bss_org_path},'%')
+		</if>
+	</update>
+</mapper>

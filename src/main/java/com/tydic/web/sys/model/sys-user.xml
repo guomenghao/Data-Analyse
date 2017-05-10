@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sys.user">
+	<!--  用户信息列表查询 -->
+	<select id="selectUserList" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select a.user_id,c.area_name,a.user_name,a.login_acct,a.user_type,b.item_text user_type_text,a.acc_nbr,a.user_email,a.head_attach_id,a.area_id,a.state
+		from sys_user a,com_dic_item b,com_area c
+		where a.user_type=b.item_code and b.dic_code='USER_TYPE' and b.state='10A' and a.state in('10A','10D')
+			  and a.area_id=c.area_id and c.state='10A'
+		<if test="user_id != null and user_id !=''">
+			and a.user_id = #{user_id}
+		</if>
+		
+		<if test="login_acct != null and login_acct !=''">
+			and a.login_acct = #{login_acct}
+		</if>
+		<if test="acc_nbr != null and acc_nbr !=''">
+			and a.acc_nbr = #{acc_nbr}
+		</if>
+		<if test="user_email != null and user_email !=''">
+			and a.user_email = #{user_email}
+		</if>
+		
+		<if test="s_user_type != null and s_user_type !=''">
+			and a.user_type = #{s_user_type}
+		</if>
+		<if test="s_key_words != null and s_key_words !=''">
+			<choose>
+				<when test="database_type == 'mysql'">
+					and (c.area_name like concat('%',#{s_key_words},'%') or a.login_acct like concat('%',#{s_key_words},'%') or a.user_name like concat('%',#{s_key_words},'%') or a.acc_nbr like concat('%',#{s_key_words},'%') or a.user_email like concat('%',#{s_key_words},'%'))
+				</when>
+				<otherwise>
+					and (c.area_name like '%'||#{s_key_words}||'%' or a.login_acct like '%'||#{s_key_words}||'%' or a.user_name like '%'||#{s_key_words}||'%' or a.acc_nbr like '%'||#{s_key_words}||'%' or a.user_email like '%'||#{s_key_words}||'%')
+				</otherwise>
+			</choose>
+		</if>
+		
+		order by a.state_date desc
+	</select>
+	
+	<select id="selectUserRoleList" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select a.user_id,a.role_id,b.role_name 
+		from sys_user_role a,sys_role b 
+		where a.role_id=b.role_id and b.state='10A' 
+		and a.state='10A' and a.user_id = #{user_id}
+	</select>
+	<select id="selectUserJobList" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select a.user_id,a.bss_org_id,b.bss_org_path,a.role_id,c.role_name
+		from sys_user_job a,sys_bss_org b,sys_role c
+		where a.bss_org_id=b.bss_org_id and a.role_id=c.role_id
+		and a.state='10A' and b.state='10A' and c.state='10A'
+		and a.user_id=#{user_id}
+		<if test="bss_org_id != null and bss_org_id !=''">
+			and b.bss_org_id = #{bss_org_id}
+		</if>
+		<if test="role_id != null and role_id !=''">
+			and a.role_id = #{role_id}
+		</if>
+	</select>
+	<insert id="insertUserJob" parameterType="java.lang.Object">
+		insert into sys_user_job(user_id,bss_org_id,role_id,state,state_date,crt_date)
+		values(#{user_id},#{bss_org_id},#{role_id},'10A',${now_date},${now_date})
+	</insert>
+	
+	<update id="delUserJob" parameterType="java.lang.Object">
+		update sys_user_job a set a.state='10X',a.state_date=${now_date}
+		where a.user_id=#{user_id} and a.bss_org_id=#{bss_org_id} and a.role_id=#{role_id} and a.state='10A'
+	</update>
+
+	<!-- 用户信息新增 -->
+	<insert id="insertUser" parameterType="java.lang.Object">
+	declare
+	v_user_id number(10);
+	begin
+		select seq_sys_user_id.nextval into v_user_id from dual;
+		
+		insert into sys_user(user_id,area_id,user_type,user_name,login_acct,login_passwd,acc_nbr,user_email,head_attach_id,state, state_date,crt_date)
+		values(v_user_id, #{area_id}, #{user_type}, #{user_name},#{login_acct},#{login_passwd},#{acc_nbr},#{user_email},#{head_attach_id,jdbcType=NUMERIC},'10A',sysdate,sysdate);
+		
+		insert into sys_user_role(user_id,role_id,state,state_date,crt_date)
+		select v_user_id,role_id,'10A',sysdate,sysdate from sys_role a 
+		where a.role_id in(
+			<foreach collection="role_id_list" index="index" item="role_id" open="" separator="," close="">
+				#{role_id}
+			</foreach>
+		) and a.state='10A';
+	end;
+	</insert>
+	<insert id="insertUser_mysql" parameterType="java.lang.Object">
+		insert into sys_user(area_id,user_type,user_name,login_acct,login_passwd,acc_nbr,user_email,head_attach_id,state, state_date,crt_date)
+		values(#{area_id}, #{user_type}, #{user_name},#{login_acct},#{login_passwd},#{acc_nbr},#{user_email},#{head_attach_id},'10A',now(),now());
+		
+		insert into sys_user_role(user_id,role_id,state,state_date,crt_date)
+		select b.user_id,a.role_id,'10A',now(),now() 
+		from sys_role a,sys_user b 
+		where a.role_id in(
+			<foreach collection="role_id_list" index="index" item="role_id" open="" separator="," close="">
+				#{role_id}
+			</foreach>
+		) and a.state='10A' and b.state='10A'
+		and b.login_acct=#{login_acct};
+	</insert>
+	
+	<!-- 用户信息编辑 -->
+	<update id="updateUser" parameterType="java.lang.Object">
+		<if test="database_type == 'oracle'">
+			begin
+		</if>
+			update sys_user a
+			set a.state_date = ${now_date}
+		<if test="area_id != null and area_id !=''">
+			,a.area_id = #{area_id}
+		</if>
+		<if test="user_name != null and user_name !=''">
+			,a.user_name = #{user_name}
+		</if>
+		<if test="user_type != null and user_type !=''">
+			,a.user_type = #{user_type}
+		</if>
+		<if test="login_acct != null and login_acct !=''">
+			,a.login_acct = #{login_acct}
+		</if>
+		<if test="acc_nbr != null and acc_nbr !=''">
+			,a.acc_nbr = #{acc_nbr}
+		</if>
+		<if test="_parameter.containsKey('user_email')">
+			,a.user_email = #{user_email}
+		</if>
+		<if test="_parameter.containsKey('head_attach_id')">
+			,a.head_attach_id = #{head_attach_id}
+		</if>
+		<if test="login_passwd != null and login_passwd !=''">
+			,a.login_passwd = #{login_passwd}
+		</if>
+		where a.user_id=#{user_id};
+		
+		<if test="_parameter.containsKey('role_id_list')">
+			update sys_user_role a set a.state='10X', a.state_date=${now_date} where a.user_id=#{user_id} and a.state='10A';
+			
+			insert into sys_user_role(user_id,role_id,state,state_date,crt_date)
+			select #{user_id},role_id,'10A',${now_date},${now_date} from sys_role a 
+			where a.role_id in(
+				<foreach collection="role_id_list" index="index" item="role_id" open="" separator="," close="">
+					#{role_id}
+				</foreach>
+			) and a.state='10A';
+		</if>
+		<if test="database_type == 'oracle'">
+			end;
+		</if>
+	</update>
+	
+	<!-- 用户信息删除 逻辑删除 -->
+	<update id="delUser" parameterType="java.lang.Object">
+		<if test="database_type == 'oracle'">
+			begin
+		</if>
+			update sys_user a set a.state='10X', a.state_date=${now_date}       where a.user_id=#{user_id} and a.state in('10A','10D');
+			update sys_user_job a set a.state='10X', a.state_date=${now_date}   where a.user_id=#{user_id} and a.state='10A';
+			update sys_user_limit a set a.state='10X', a.state_date=${now_date} where a.user_id=#{user_id} and a.state='10A';
+			update sys_user_role a set a.state='10X', a.state_date=${now_date}  where a.user_id=#{user_id} and a.state='10A';
+		<if test="database_type == 'oracle'">
+			end;
+		</if>
+	</update>
+	<!-- 用户冻结-->
+	<update id="frozenUser" parameterType="java.lang.Object">
+		<if test="database_type == 'oracle'">
+			begin
+		</if>
+			update sys_user a set a.state='10D', a.state_date=${now_date}  where a.user_id=#{user_id} and a.state ='10A';
+		<if test="database_type == 'oracle'">
+			end;
+		</if>
+	</update>
+	<!-- 用户解冻-->
+	<update id="unFrozenUser" parameterType="java.lang.Object">
+		<if test="database_type == 'oracle'">
+			begin
+		</if>
+			update sys_user a set a.state='10A', a.state_date=${now_date}  where a.user_id=#{user_id} and a.state ='10D';
+		<if test="database_type == 'oracle'">
+			end;
+		</if>
+	</update>
+	
+	<!-- 用户基于角色拥有的菜单功能权限 -->
+	<select id="selectUserRoleLimitList" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select * from (
+			select distinct c.limit_id,c.menu_func_id,c.menu_func_name,c.up_menu_func_id,c.order_id
+	    	from sys_user_role a,sys_role_limit b,sys_menu_function c
+	    	where a.role_id=b.role_id and b.limit_id=c.limit_id
+	    	and a.state='10A' and b.state='10A' and c.state='10A'
+	    	and a.user_id=#{user_id}
+	    ) xx
+		order by xx.up_menu_func_id asc,xx.order_id asc    	  
+	</select>
+	
+	<!-- 用户自身拥有菜单功能权限 -->
+	<select id="selectUserLimitList" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select c.limit_id,c.menu_func_id,c.menu_func_name,c.up_menu_func_id
+	    from sys_user_limit a,sys_menu_function c
+	    where a.limit_id=c.limit_id
+	    and a.state='10A' and c.state='10A'
+	    and a.user_id=#{user_id}
+		order by c.up_menu_func_id asc,c.order_id asc    	  
+	</select>
+	<update id="insertUserLimit" parameterType="java.lang.Object">
+		<if test="database_type == 'oracle'">
+			begin
+		</if>
+			update sys_user_limit a set a.state='10X',a.state_date=${now_date} where a.user_id=#{user_id};
+		<if test="_parameter.containsKey('limit_id_list')">
+			update sys_user_limit a set a.state='10X', a.state_date=${now_date} where a.user_id=#{user_id} and a.state='10A';
+			
+			insert into sys_user_limit(user_id,limit_id,state,state_date,crt_date)
+			select #{user_id},limit_id,'10A',${now_date},${now_date} from sys_limit a 
+			where a.limit_id in(
+				<foreach collection="limit_id_list" index="index" item="limit_id" open="" separator="," close="">
+					#{limit_id}
+				</foreach>
+			) and a.state='10A';
+		</if>
+		<if test="database_type == 'oracle'">
+			end;
+		</if>
+	</update>
+</mapper>

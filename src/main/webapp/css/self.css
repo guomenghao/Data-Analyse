@@ -1,0 +1,72 @@
+.sui-container {
+	width: 98%;
+}
+.sui-table {
+	table-layout: fixed;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+.table-primary tr:hover{
+	background: #e6e6e6;
+}
+
+.sui-table td {
+	word-break: keep-all;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.sui-pagination {
+	margin-left: 1px;
+	margin-top: 3px;
+}
+
+.sui-form {
+	margin: 0 0 10px;
+}
+
+.sui-pagination {
+	margin: 0px;
+}
+
+.sort {
+    font-family: "icon-tb";
+    font-style: normal;
+    line-height: 1;
+}
+.sort:after {
+	vertical-align : 0px;
+    content: "\e66c";
+    color: gray;
+}
+
+.sui-table th.sort:HOVER::after {
+    color: white;
+}
+
+/*icon-tb \e66c*/
+
+.sort-desc {
+    font-family: "icon-pc";
+    font-style: normal;
+    line-height: 1;
+}
+.sort-desc:after {
+	vertical-align : 0px;
+    content: "\c611";
+}
+
+.sort-asc {
+    font-family: "icon-pc";
+    font-style: normal;
+    line-height: 1;
+}
+.sort-asc:after {
+	vertical-align : 0px;
+    content: "\c60e";
+}
+
+.ms-controller {
+	visibility: hidden
+}

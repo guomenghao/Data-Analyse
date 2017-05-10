@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="sys.log">
+	<select id="selectLoginLogList" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select a.user_id,a.user_name,a.area_id,f.area_name,c.item_text user_type_text,d.item_text terminal_type_text,
+		     e.item_text os_type_text,b.login_ip,${date_to_str}(b.login_date, ${date_format}) login_date,b.ticket
+		from sys_user a,sys_user_ticket b,com_dic_item c,com_dic_item d,com_dic_item e,com_area f
+		where a.user_id=b.user_id and a.user_type=c.item_code and c.dic_code='USER_TYPE'
+		and b.terminal_type=d.item_code and d.dic_code='TERMINAL_TYPE'
+		and b.os_type=e.item_code and e.dic_code='OS_TYPE'
+		and a.area_id=f.area_id and f.state='10A'
+		and c.state='10A' and d.state='10A' and e.state='10A'
+		
+		<if test="s_start != null and s_start !=''">
+			<if test="database_type == 'oracle'">
+				and b.crt_date >= ${str_to_date}(#{s_start}||' 00:00:00', ${date_format})
+			</if>
+			<if test="database_type == 'mysql'">
+				and b.crt_date >= ${str_to_date}(concat(#{s_start},' 00:00:00'), ${date_format})
+			</if>
+			
+		</if>
+		<if test="s_end != null and s_end !=''">
+			<if test="database_type == 'oracle'">
+				<![CDATA[
+				and b.crt_date <= ${str_to_date}(#{s_end}||' 23:59:59', ${date_format})
+				]]>
+			</if>
+			<if test="database_type == 'mysql'">
+				<![CDATA[
+				and b.crt_date <= ${str_to_date}(concat(#{s_end},' 23:59:59'), ${date_format})
+				]]>
+			</if>
+		</if>
+		
+		<if test="s_user_type != null and s_user_type !=''">
+			and a.user_type = #{s_user_type}
+		</if>
+		<if test="s_key_words != null and s_key_words !=''">
+			<choose>
+				<when test="database_type == 'mysql'">
+					and (f.area_name like concat('%',#{s_key_words},'%') or a.login_acct like concat('%',#{s_key_words},'%') or a.user_name like concat('%',#{s_key_words},'%') or a.acc_nbr like concat('%',#{s_key_words},'%') or a.user_email like concat('%',#{s_key_words},'%'))
+				</when>
+				<otherwise>
+					and (f.area_name like '%'||#{s_key_words}||'%' or a.login_acct like '%'||#{s_key_words}||'%' or a.user_name like '%'||#{s_key_words}||'%' or a.acc_nbr like '%'||#{s_key_words}||'%' or a.user_email like '%'||#{s_key_words}||'%')
+				</otherwise>
+			</choose>
+		</if>
+		<if test="order_by != null and order_by !=''">
+			order by ${order_by} 
+		</if>
+	</select>
+</mapper>

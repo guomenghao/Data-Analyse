@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="sys.menufunc">
+	<select id="selectMenuFunctionList" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select a.menu_func_id,a.limit_id,c.limit_type,d.item_text limit_type_text,a.menu_func_name,a.menu_func_desc,a.up_menu_func_id,a.menu_func_path,a.order_id,a.url_info,
+		       a.from_system,b.item_text from_system_text
+		from sys_menu_function a,com_dic_item b,sys_limit c,com_dic_item d
+		where a.from_system=b.item_code and b.dic_code='FROM_SYSTEM' AND b.state='10A' and a.state='10A'
+		and a.limit_id=c.limit_id and c.state='10A'
+		and c.limit_type=d.item_code and d.dic_code='LIMIT_TYPE' and d.state='10A'
+		<if test="menu_func_id != null and menu_func_id !=''">
+			and a.menu_func_id = #{menu_func_id} 
+		</if>
+		order by a.up_menu_func_id asc,a.order_id asc
+	</select>
+	
+	<insert id="insertSysLimit" parameterType="java.lang.Object">
+		<selectKey keyProperty="limit_auto_id" resultType="long" order="BEFORE">  
+	            select seq_sys_limit_id.nextval from dual
+	    </selectKey>
+        insert into sys_limit(limit_id, limit_type, state, state_date, crt_date)
+		values(#{limit_auto_id}, #{limit_type}, '10A', sysdate, sysdate)
+	</insert>
+	<insert id="insertSysLimit_mysql" parameterType="java.lang.Object">
+       		insert into sys_limit(limit_type, state, state_date, crt_date)
+			values(#{limit_type}, '10A', now(), now());
+        <selectKey keyProperty="limit_auto_id" resultType="long" order="AFTER">  
+            SELECT LAST_INSERT_ID()  
+        </selectKey>
+	</insert>
+	
+	<insert id="insertMenuFunction" parameterType="java.lang.Object">
+		<selectKey keyProperty="menu_func_auto_id" resultType="long" order="BEFORE">  
+	        select seq_sys_menu_function_id.nextval from dual
+	    </selectKey>
+			insert into sys_menu_function(menu_func_id,limit_id,menu_func_name,menu_func_desc,up_menu_func_id,order_id,url_info,
+									      from_system, state, state_date, crt_date)
+			values(#{menu_func_auto_id},#{limit_id},#{menu_func_name},#{menu_func_desc},#{up_menu_func_id},#{order_id},#{url_info},#{from_system}, '10A', sysdate, sysdate)
+	</insert>
+	<insert id="insertMenuFunction_mysql" parameterType="java.lang.Object">
+			insert into sys_menu_function(limit_id,menu_func_name,menu_func_desc,up_menu_func_id,order_id,url_info,
+									      from_system, state, state_date, crt_date)
+			values(#{limit_id},#{menu_func_name},#{menu_func_desc},#{up_menu_func_id},#{order_id},#{url_info},#{from_system}, '10A', now(), now())
+		<selectKey keyProperty="menu_func_auto_id" resultType="long" order="AFTER">  
+            SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+	
+	<update id="updateMenuFuncPathByMenuFuncId" parameterType="java.lang.Object">
+		update sys_menu_function a set a.menu_func_path = #{menu_func_path}
+		where a.menu_func_id=#{menu_func_id}
+	</update>
+	
+	<update id="delMenuFunction" parameterType="java.lang.Object">
+		<if test="database_type == 'oracle'">
+			begin
+		</if>
+			update sys_limit a
+			set a.state='10X', a.state_date = ${now_date}
+			where a.limit_id in(
+			<if test="database_type == 'oracle'">
+				select limit_id from sys_menu_function x where x.menu_func_path like #{menu_func_path}||'%' and x.state='10A'
+			</if>
+			<if test="database_type == 'mysql'">
+				select limit_id from sys_menu_function x where x.menu_func_path like concat(#{menu_func_path},'%') and x.state='10A'
+			</if>
+			
+			) and a.state='10A';
+			
+			update sys_menu_function a
+			set a.state='10X', a.state_date = ${now_date}
+			where a.state='10A'
+			<if test="database_type == 'oracle'">
+				and a.menu_func_path like #{menu_func_path}||'%';
+			</if>
+			<if test="database_type == 'mysql'">
+				and a.menu_func_path like concat(#{menu_func_path},'%');
+			</if>
+		<if test="database_type == 'oracle'">
+			end;
+		</if>
+	</update>
+	
+	<update id="updateMenuFunction" parameterType="java.lang.Object">
+		update sys_menu_function a
+		set a.state_date = ${now_date}
+		<if test="_parameter.containsKey('up_menu_func_id')">
+			,a.up_menu_func_id = #{up_menu_func_id}
+		</if>
+		<if test="menu_func_name != null and menu_func_name !=''">
+			,a.menu_func_name = #{menu_func_name}
+		</if>
+		<if test="order_id != null and order_id !=''">
+			,a.order_id = #{order_id}
+		</if>
+		<if test="url_info != null and url_info !=''">
+			,a.url_info = #{url_info}
+		</if>
+		<if test="from_system != null and from_system !=''">
+			,a.from_system = #{from_system}
+		</if>
+		<if test="_parameter.containsKey('menu_func_desc')">
+			,a.menu_func_desc = #{menu_func_desc}
+		</if>
+		where a.menu_func_id=#{menu_func_id}
+	</update>
+	<update id="updateMenuFunctionPath" parameterType="java.lang.Object">
+		update sys_menu_function a
+		set a.state_date = ${now_date},a.menu_func_path=replace(a.menu_func_path,#{v_menu_func_path_current},#{v_menu_func_path_new})
+		where a.state='10A'
+		<if test="database_type == 'oracle'">
+			and a.menu_func_path like #{v_menu_func_path_current}||'%'
+		</if>
+		<if test="database_type == 'mysql'">
+			and a.menu_func_path like concat(#{v_menu_func_path_current},'%')
+		</if>
+	</update>
+	
+</mapper>

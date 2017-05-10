@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<!-- dev 开发模式，pub 发布模式 开发模式以appconfig文件为准 -->
+	<entry key="app.publish.model">pub</entry>
+	
+	<!-- 以下变量在dev模式时会覆盖从数据库app_config表读取的参数 -->
+	
+	<!-- 
+	<entry key="app.cache.name">redis</entry>
+	<entry key="app.cache.time">sso_cache:3600,service_param_valid:3600</entry>
+	<entry key="except.action">login.jsp,/sso/login.action,/sso/validTicket.action,error404.jsp,error500.jsp</entry>
+	<entry key="encrypt.method">base64</entry>
+	<entry key="encrypt.key">will.hehe.data.simi.yoxi</entry>
+	<entry key="redis.server.model">standalone</entry>
+	 -->
+	 
+	<!-- 以上变量在dev模式时会覆盖从数据库app_config表读取的参数 -->
+
+
+    <!-- datasource mysql dev03.oicp.net:63306 10.40.15.10:3306/lms_sys_v3 tag/tag-->
+    <!--  <entry key="dataSource.driverClassName">com.mysql.jdbc.Driver</entry>
+	<entry key="dataSource.url">jdbc:mysql://dev03.oicp.net:63306/sys_v3_db_dev?useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true</entry>
+	<entry key="dataSource.username">sys_v3_dev</entry>
+	<entry key="dataSource.password">SMDasd123!@#</entry>
+	 -->
+	<!-- datasource Oracle dev03.oicp.net:31521-->
+	<entry key="dataSource.driverClassName">oracle.jdbc.driver.OracleDriver</entry>
+	<entry key="dataSource.url">jdbc:oracle:thin:@dev03.oicp.net:31521:marketdb</entry>
+	<entry key="dataSource.username">sys_v3_dev</entry>
+	<entry key="dataSource.password">1234567890</entry> 
+</properties>

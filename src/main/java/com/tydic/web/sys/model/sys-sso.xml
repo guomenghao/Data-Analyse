@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="sys.sso">
+	<!--  用户登录认证 -->
+	<select id="selectUserLogin" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select a.user_id,a.state,(case a.login_passwd when #{login_passwd} then 1 else 0 end) passwd_flag
+		from sys_user a
+		where a.state in('10A','10D')
+		      and (a.login_acct=#{login_code} or a.acc_nbr=#{login_code} or a.user_email=#{login_code})
+	</select>
+	
+	<select id="selectUserFor4A" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select a.user_id
+		from sys_user a
+		where a.state='10A' and a.login_acct=#{login_code}
+	</select>
+	
+	<!-- 添加用户票据记录 -->
+	<insert id="insertUserTicket" parameterType="java.lang.Object">
+		insert into sys_user_ticket(ticket,user_id,eff_date,exp_date,login_date,terminal_type,os_type,user_agent,login_ip,state,state_date,crt_date)
+		values(#{ticket},#{user_id},sysdate,sysdate+1,sysdate,#{terminal_type},#{os_type},#{user_agent},#{login_ip},'10A',sysdate,sysdate)
+	</insert>
+	
+	<insert id="insertUserTicket_mysql" parameterType="java.lang.Object">
+		insert into sys_user_ticket(ticket,user_id,eff_date,exp_date,login_date,terminal_type,os_type,user_agent,login_ip,state,state_date,crt_date)
+		values(#{ticket},#{user_id},now(),date_add(now(),interval 1 day),now(),#{terminal_type},#{os_type},#{user_agent},#{login_ip},'10A',now(),now())
+	</insert>
+	
+	<!-- 添加菜单功能项日志 -->
+	<insert id="insertMenuFunctioncLog" parameterType="java.lang.Object">
+		insert into sys_menu_function_log(log_id,menu_func_id,user_id,click_date,state,state_date,crt_date)
+		values(seq_sys_menu_function_log_id.nextval,#{menu_func_id},#{user_id},sysdate,'10A',sysdate,sysdate)
+	</insert>
+	<insert id="insertMenuFunctioncLog_mysql" parameterType="java.lang.Object">
+		insert into sys_menu_function_log(menu_func_id,user_id,click_date,state,state_date,crt_date)
+		values(#{menu_func_id},#{user_id},now(),'10A',now(),now())
+	</insert>
+	
+	<!-- 用户基本信息查询,有可能查询已经注销的员工信息，所以不默认添加状态过滤 -->
+	<select id="selectUserBasicInfo" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select a.user_id,a.area_id,b.area_name,a.user_type,c.item_text user_type_text,user_name,login_acct,acc_nbr,user_email,
+			   a.head_attach_id,a.state,${date_to_str}(a.crt_date,${date_format}) crt_date
+		from sys_user a,com_area b,com_dic_item c
+		where 1=1
+			  and a.area_id=b.area_id and b.state='10A'
+			  and a.user_type=c.item_code and c.dic_code='USER_TYPE' and c.state='10A'
+			  and a.user_id=#{user_id}
+	</select>
+	
+	<!-- 用户角色列表查询 -->
+	<select id="selectUserRoleList" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select a.role_id,b.role_name
+		from sys_user_role a, sys_role b
+		where a.state='10A'
+			  and a.role_id=b.role_id and b.state='10A'
+			  and a.user_id = #{user_id}
+	</select>
+	
+	<!-- 用户任职列表查询 -->
+	<select id="selectUserJobList" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select a.bss_org_id,c.bss_org_name,c.up_bss_org_id,c.area_id,c.bss_org_path,a.role_id,b.role_name
+		from sys_user_job a, sys_role b,sys_bss_org c
+		where a.state='10A'
+      		  and a.role_id=b.role_id  and b.state='10A'
+      		  and a.bss_org_id=c.bss_org_id and c.state='10A'
+		      and a.user_id = #{user_id}
+	</select>
+	
+	<!-- 用户权限列表查询 -->
+	<select id="selectUserLimitList" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select *
+		from (
+			select a.limit_id,b.limit_type,c.menu_func_id,c.menu_func_name,c.menu_func_desc,
+		       	   c.up_menu_func_id,order_id,url_info,from_system,c.menu_func_path
+		    from sys_user_limit a,sys_limit b,sys_menu_function c
+		    where a.state='10A'
+		    	  and a.limit_id=b.limit_id and b.state='10A'
+		    	  and b.limit_id=c.limit_id and c.state='10A'
+		    	  and a.user_id = #{user_id}
+		    union
+		    select a.limit_id limit_id,b.limit_type,c.menu_func_id,c.menu_func_name,c.menu_func_desc,
+		           c.up_menu_func_id,order_id,url_info,from_system,c.menu_func_path
+		    from sys_user_role r, sys_role_limit a,sys_limit b,sys_menu_function c
+		    where a.state='10A'
+		    	  and r.role_id=a.role_id and r.state='10A'
+		    	  and a.limit_id=b.limit_id and b.state='10A'
+		    	  and b.limit_id=c.limit_id and c.state='10A'
+		    	  and r.user_id=#{user_id}
+	  	) xx order by  xx.up_menu_func_id asc, xx.order_id asc
+	</select>
+	
+	<select id="selectUserTicketDetail" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select a.ticket,a.user_id user_id,a.terminal_type,d.item_text terminal_type_text,a.os_type,e.item_text os_type_text,a.user_agent,a.login_ip,a.state,
+       		   ${date_to_str}(a.eff_date,${date_format}) eff_date,${date_to_str}(a.exp_date,${date_format}) exp_date,
+       	       ${date_to_str}(a.login_date,${date_format}) login_date
+		from sys_user_ticket a,com_dic_item d,com_dic_item e
+		where a.terminal_type=d.item_code and d.dic_code='TERMINAL_TYPE'
+		and a.os_type=e.item_code and e.dic_code='OS_TYPE'
+		and d.state='10A' and e.state='10A'
+		and a.ticket=#{ticket}
+		<if test="valid_ticket != null and valid_ticket !='' and valid_ticket == 'true'">
+			and a.state='10A' and a.exp_date >= ${now_date}
+		</if>
+	</select>
+	
+	<select id="selectMenuFunctionList" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select a.menu_func_id,a.limit_id,c.limit_type,d.item_text limit_type_text,a.menu_func_name,a.menu_func_desc,a.up_menu_func_id,a.menu_func_path,a.order_id,a.url_info,
+		       a.from_system,b.item_text from_system_text
+		from sys_menu_function a,com_dic_item b,sys_limit c,com_dic_item d
+		where a.from_system=b.item_code and b.dic_code='FROM_SYSTEM' AND b.state='10A' and a.state='10A'
+		and a.limit_id=c.limit_id and c.state='10A'
+		and c.limit_type=d.item_code and d.dic_code='LIMIT_TYPE' and d.state='10A'
+		order by a.up_menu_func_id asc,a.order_id asc
+	</select>
+	
+	<select id="selectLoginLogList" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select a.user_id,a.user_name,a.area_id,f.area_name,c.item_text user_type_text,d.item_text terminal_type_text,
+		     e.item_text os_type_text,b.login_ip,${date_to_str}(b.login_date, ${date_format}) login_date,b.ticket
+		from sys_user a,sys_user_ticket b,com_dic_item c,com_dic_item d,com_dic_item e,com_area f
+		where a.user_id=b.user_id and a.user_type=c.item_code and c.dic_code='USER_TYPE'
+		and b.terminal_type=d.item_code and d.dic_code='TERMINAL_TYPE'
+		and b.os_type=e.item_code and e.dic_code='OS_TYPE'
+		and a.area_id=f.area_id and f.state='10A'
+		and c.state='10A' and d.state='10A' and e.state='10A'
+		
+		<if test="s_start != null and s_start !=''">
+			<if test="database_type == 'oracle'">
+				and b.crt_date >= ${str_to_date}(#{s_start}||' 00:00:00', ${date_format})
+			</if>
+			<if test="database_type == 'mysql'">
+				and b.crt_date >= ${str_to_date}(concat(#{s_start},' 00:00:00'), ${date_format})
+			</if>
+			
+		</if>
+		<if test="s_end != null and s_end !=''">
+			<if test="database_type == 'oracle'">
+				<![CDATA[
+				and b.crt_date <= ${str_to_date}(#{s_end}||' 23:59:59', ${date_format})
+				]]>
+			</if>
+			<if test="database_type == 'mysql'">
+				<![CDATA[
+				and b.crt_date <= ${str_to_date}(concat(#{s_end},' 23:59:59'), ${date_format})
+				]]>
+			</if>
+		</if>
+		
+		<if test="s_user_type != null and s_user_type !=''">
+			and a.user_type = #{s_user_type}
+		</if>
+		<if test="s_key_words != null and s_key_words !=''">
+			<choose>
+				<when test="database_type == 'mysql'">
+					and (f.area_name like concat('%',#{s_key_words},'%') or a.login_acct like concat('%',#{s_key_words},'%') or a.user_name like concat('%',#{s_key_words},'%') or a.acc_nbr like concat('%',#{s_key_words},'%') or a.user_email like concat('%',#{s_key_words},'%'))
+				</when>
+				<otherwise>
+					and (f.area_name like '%'||#{s_key_words}||'%' or a.login_acct like '%'||#{s_key_words}||'%' or a.user_name like '%'||#{s_key_words}||'%' or a.acc_nbr like '%'||#{s_key_words}||'%' or a.user_email like '%'||#{s_key_words}||'%')
+				</otherwise>
+			</choose>
+		</if>
+		<if test="order_by != null and order_by !=''">
+			order by ${order_by} 
+		</if>
+	</select>
+	
+	<select id="selectUpdatePasswordValid" parameterType="java.lang.Object" resultType="com.tydic.base.util.HashMapLowerCase">
+		select count(1) cnt
+		from sys_user a
+		where a.user_id=#{user_id} and a.login_passwd=#{current_passwd}
+	</select>
+	
+	<update id="updatePassword" parameterType="java.lang.Object">
+		update sys_user a set login_passwd=#{new_passwd}
+		where a.user_id=#{user_id}
+	</update>
+	
+	<!-- 添加4A票据记录 -->
+	<insert id="insertLog4A" parameterType="java.lang.Object">
+		insert into SYS_USER_TICKET_4A(LOG_ID,TICKET,PARAM_4A_IN,PARAM_4A_OUT,state,state_date,crt_date)
+		values(SEQ_4A_LOG_ID.NEXTVAL,#{ticket},#{param_4a_in},#{param_4a_out},'10A',sysdate,sysdate)
+	</insert>
+	
+	<insert id="insertLog4A_mysql" parameterType="java.lang.Object">
+		insert into SYS_USER_TICKET_4A(TICKET,PARAM_4A_IN,PARAM_4A_OUT,state,state_date,crt_date)
+		values(#{ticket},#{param_4a_in},#{param_4a_out},'10A',now(),now())
+	</insert>
+</mapper>
