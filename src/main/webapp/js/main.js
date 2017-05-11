@@ -1,4 +1,4 @@
-<script type="text/javascript" >
+
             function createEl(){
                 var titleEl=document.createElement('div');
                 titleEl.className='fontBg';
@@ -752,4 +752,3 @@ wordCloudOption = {
                     topRB.appendChild(createEl());
                 },500);
                 // axisOption
-        </script>

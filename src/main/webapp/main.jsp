@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
@@ -7,7 +6,18 @@
     <head>  
          <meta charset="UTF-8">  
         <title>演示页面</title>  
-        <link rel="stylesheet" href="${ctx}/js/main.css">
+        <%@include file="common/common-nologin.jsp" %>
+        <link rel="stylesheet" href="${ctx}/css/main.css">
+        <script type="text/javascript" src="http://zeptojs.com/zepto.js"></script>
+        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts-all-3.js"></script>
+        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+        <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+        <script type="text/javascript" src="${ctx}/js/worldcloud.js"></script>
+        <script type="text/javascript" src="${ctx}/js/datajson.js"></script>
+        
         
     </head>  
     <body>  
@@ -99,19 +109,10 @@
                 </div>
             </div>      
         </div>
-        <script type="text/javascript" src="http://zeptojs.com/zepto.js"></script>
-        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts-all-3.js"></script>
-        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
-        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
-        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
-        <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
-        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
-        <script type="text/javascript" src="${ctx}/js/worldcloud.js"></script>
-        <script type="text/javascript" src="${ctx}/js/datajson.js"></script>
-        <script type="text/javascript" src="${ctx}/js/main.js"></script>
+        
        <!--  <script type="text/javascript" src="worldcloud.js"></script>
         <script type="text/javascript" src="datajson.js"></script> -->
-
+	<script type="text/javascript" src="${ctx}/js/main.js"></script>
         
     </body>  
 </html>

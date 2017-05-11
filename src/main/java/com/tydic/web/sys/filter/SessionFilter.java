@@ -64,10 +64,10 @@ public class SessionFilter implements Filter {
 				break;
 			}
 		}
-		if (!except_flag && !this.validTicket(request, response)) {
-			response.sendRedirect(request.getContextPath() + "/login.jsp");
-			return;
-		}
+//		if (!except_flag && !this.validTicket(request, response)) {
+//			response.sendRedirect(request.getContextPath() + "/login.jsp");
+//			return;
+//		}
 
 		filterChain.doFilter(request, response);
 	}
