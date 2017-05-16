@@ -28,15 +28,15 @@
                         <img src="logo.png" alt="">
                     </div>
                     <div class="topLM fontBg">
-                        四川新闻
+                        四川舆情
                     </div>
                     <div class="topLB">
                         <div class="tabTitle">
                             <i></i>
                             <span data-indx='0'>全部</span>
-                            <span data-indx='1'>党政动态</span>
+                            <span data-indx='1' data-type='china'>党政动态</span>
                             <span data-indx='2'>社会主义</span>
-                            <span data-indx='3'>宣传动态</span>
+                            <span data-indx='3' data-type='china'>宣传动态</span>
                             <span data-indx='4'>城市建设</span>
                         </div>
                         <div class="tabContent">
@@ -56,7 +56,7 @@
                 <div class="bottom1"></div>
                 <div class="bottom2">
                     <div class=" fontBg">
-                        四川新闻
+                        四川舆情热点
                     </div>
                     <div class="point">
                         <i></i>
@@ -78,7 +78,7 @@
                 <div class="bottom3"></div>
                 <div class="bottom4">
                     <div class=" fontBg">
-                        四川新闻
+                        专家热评
                     </div>
                     <ul>
                         <li>
@@ -110,8 +110,6 @@
             </div>      
         </div>
         
-       <!--  <script type="text/javascript" src="worldcloud.js"></script>
-        <script type="text/javascript" src="datajson.js"></script> -->
 	<script type="text/javascript" src="${ctx}/js/main.js"></script>
         
     </body>  
