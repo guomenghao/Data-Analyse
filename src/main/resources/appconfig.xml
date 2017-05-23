@@ -16,7 +16,7 @@
 	<entry key="encrypt.method">base64</entry>
 	<entry key="encrypt.key">will.hehe.data.simi.yoxi</entry>
 	<entry key="redis.server.model">standalone</entry> 
-	<entry key="sso.service.action.url">http://dev03.oicp.net:3080/sys</entry>
+	<entry key="sso.service.action.url">http://125.70.116.84:3080/sys</entry>
 	<!-- 以上变量在dev模式时会覆盖从数据库app_config表读取的参数 -->
 
 
@@ -28,7 +28,7 @@
 	 
 	<!-- datasource Oracle dev03.oicp.net:31521-->
 	<entry key="dataSource.driverClassName">oracle.jdbc.driver.OracleDriver</entry>
-	<entry key="dataSource.url">jdbc:oracle:thin:@dev03.oicp.net:31521:marketdb</entry>
+	<entry key="dataSource.url">jdbc:oracle:thin:@125.70.116.84:31521:marketdb</entry>
 	<entry key="dataSource.username">sys_v3_dev</entry>
 	<entry key="dataSource.password">1234567890</entry>
 </properties>
