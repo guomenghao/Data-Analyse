@@ -25,7 +25,7 @@
             <div class="top">
                 <div class="topL">
                     <div class="topLT">
-                        <img src="logo.png" alt="">
+                        <!-- <img src="logo.png" alt=""> -->
                     </div>
                     <div class="topLM fontBg">
                         四川舆情
@@ -56,7 +56,7 @@
                 <div class="bottom1"></div>
                 <div class="bottom2">
                     <div class=" fontBg">
-                        四川舆情热点
+                        全国舆情热点
                     </div>
                     <div class="point">
                         <i></i>

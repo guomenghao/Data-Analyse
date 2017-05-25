@@ -1,7 +1,15 @@
-function createEl(str){
+var checkFlag=0;
+            function createEl(str){
                 var titleEl=document.createElement('div');
                 titleEl.className='fontBg';
                 titleEl.innerText=str;
+                return titleEl;
+
+            }
+            function createNP(){
+                var titleEl=document.createElement('div');
+                titleEl.className='big';
+                titleEl.innerHTML="<div class='prev'><</div><div  class='next'>></div>"
                 return titleEl;
 
             }
@@ -124,7 +132,7 @@ function createEl(str){
                             }else{
                                 chinaMap.setOption(option = {
                                     title: {
-                                        text: 'NPM Dependencies'
+                                        text: ''
                                     },
                                     animationDurationUpdate: 1500,
                                     animationEasingUpdate: 'quinticInOut',
@@ -218,7 +226,7 @@ function createEl(str){
                                             data:['直接访问','邮件营销','联盟广告','视频广告'],
                                             textStyle:{
                                                 color:"#fff",
-                                                fontSize:'6'
+                                                fontSize:'7'
                     
                                             },
                                             itemHeight:5,
@@ -715,7 +723,7 @@ var convertData = function (data) {
     // chinaMap.showLoading();
     chinaMap.setOption(option = {
         title: {
-            text: 'NPM Dependencies'
+            text: ''
         },
         animationDurationUpdate: 1500,
         animationEasingUpdate: 'quinticInOut',
@@ -971,6 +979,22 @@ wordCloudOption = {
             enable: true,
             minSize: 14
         },
+
+        textStyle: {
+            normal: {
+                fontFamily: 'sans-serif',
+                fontWeight: 'bold',
+                // Color can be a callback function or a color string 
+                color: function () {
+                    // Random color 
+                    return '#0afed2';
+                }
+            },
+            emphasis: {
+                shadowBlur: 10,
+                shadowColor: '#333'
+            }
+        },
         data: [
             {
                 name: "Sam S Club",
@@ -1122,7 +1146,7 @@ wordCloudOption = {
                         axisLabel :{
                             textStyle:{
                                 color:"#fff",
-                                fontSize:6
+                                fontSize:7
                             }
                         }
                     },
@@ -1208,10 +1232,256 @@ wordCloudOption = {
                 barX.setOption(barXOption);
                 barY.setOption(barYOption);
                 setTimeout(function(){
-                    topM.appendChild(createEl('舆情关系图'));
+                    topM.appendChild(createNP());
+                    var next=document.getElementsByClassName('next')[0];
+                    var prev=document.getElementsByClassName('prev')[0];
+                    next.onclick=function(){
+                        checkFlag++;
+                        if(checkFlag>9){
+                            checkFlag--;
+                            this.style.color='#555';
+                           return ;
+                        }
+                        prev.style.color="#0afed2";
+                        chinaMap.clear();
+                        tab.clear();
+                        axis.clear();
+                        worldcloud.clear();
+                        barX.clear();
+                        barY.clear();
+                        var a=1;
+                        var Arr = ["1","2","3","4"];  
+                        var n = Math.floor(Math.random() * Arr.length + 1)-1;  
+                        if(io){
+                            a=-1;
+                        }else{
+                            a=1;
+                        }
+                        startMove1(bottom2Bg,{top:Math.ceil(20*n)},function(){
+                           
+                            tab.setOption(tabOption);
+                        });
+                        startMove1(bottom2Content,{opacity:0},function(){
+                            bottom2Content.style.opacity='1';
+                        });
+                        startMove1(b4Ul,{left:b4Ul.offsetLeft+(a*(Math.floor(bottom4.offsetWidth/3)-8+Math.floor((bottom4.offsetWidth/3)*0.08)))},function(){
+                            if(io){
+                                io=false;
+                            }else{
+                                io=true;
+                            }
+                        });
+                        startMove1(tabTitleBg,{left:Math.ceil((this.offsetWidth+6)*(this.getAttribute('data-indx')))},function(){
+                            tabOption.series[0].data[0].value+=10;
+                            tabOption.series[0].data[1].value+=20;
+                            tabOption.series[1].data[0].value+=10;
+                            tabOption.series[1].data[1].value+=20;
+                            if(checkFlag%2==1){
+                                mapOption.series[0].data=convertData(data1);
+                                chinaMap.setOption(mapOption);
+
+                            }else{
+                                chinaMap.setOption(option = {
+                                    title: {
+                                        text: ''
+                                    },
+                                    animationDurationUpdate: 1500,
+                                    animationEasingUpdate: 'quinticInOut',
+                                    series : [
+                                        {
+                                            type: 'graph',
+                                            layout: 'none',
+                                            // progressiveThreshold: 700,
+                                            // itemStyle:{
+                                                
+                                            // },
+                                            width:"80%",
+                                            // height:'80%',
+                                            data: data.nodes.map(function (node) {
+                                                return {
+                                                    x: node.x,
+                                                    y: node.y,
+                                                    id: node.id,
+                                                    name: node.label,
+                                                    symbolSize: node.size,
+                                                    itemStyle: {
+                                                        normal: {
+
+                                                            color: node.color,
+                                                            shadowColor:node.color,
+                                                            shadowBlur: 20
+                                                            // borderColor:node.color
+                                                            // borderWidth :'1'
+                                                        },
+                                                        emphasis:{
+                                                            color:node.color
+                                                        }
+                                                    }
+                                                };
+                                            }),
+                                            edges: data.edges.map(function (edge) {
+                                                return {
+                                                    source: edge.sourceID,
+                                                    target: edge.targetID
+                                                };
+                                            }),
+                                            
+                                            label: {
+                                                emphasis: {
+                                                    position: 'right',
+                                                    show: true
+                                                }
+                                            },
+                                            roam: true,
+                                            focusNodeAdjacency: true,
+                                            lineStyle: {
+                                                normal: {
+                                                    width: 0.4,
+                                                    curveness: 0.3,
+                                                    opacity:.7,
+                                                    color:'#0afed2'
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }, true);
+                            }
+                            tab.setOption(tabOption);
+                            axis.setOption(axisOption);
+                            worldcloud.setOption(wordCloudOption);
+                            barX.setOption(barXOption);
+                            barY.setOption(barYOption);
+                                
+                        });
+                        if(checkFlag>8){
+                            this.style.color='#555';
+                        }
+                    };
+                    prev.onclick=function(){
+                        checkFlag--;
+                        if(checkFlag<0){
+                            this.style.color='#555';
+                            checkFlag++;
+                           return ;
+                        }
+                        next.style.color="#0afed2";
+                        chinaMap.clear();
+                        tab.clear();
+                        axis.clear();
+                        worldcloud.clear();
+                        barX.clear();
+                        barY.clear();
+                        var a=1;
+                        var Arr = ["1","2","3","4"];  
+                        var n = Math.floor(Math.random() * Arr.length + 1)-1;  
+                        if(io){
+                            a=-1;
+                        }else{
+                            a=1;
+                        }
+                        startMove1(bottom2Bg,{top:Math.ceil(20*n)},function(){
+                           
+                            tab.setOption(tabOption);
+                        });
+                        startMove1(bottom2Content,{opacity:0},function(){
+                            bottom2Content.style.opacity='1';
+                        });
+                        startMove1(b4Ul,{left:b4Ul.offsetLeft+(a*(Math.floor(bottom4.offsetWidth/3)-8+Math.floor((bottom4.offsetWidth/3)*0.08)))},function(){
+                            if(io){
+                                io=false;
+                            }else{
+                                io=true;
+                            }
+                        });
+                        startMove1(tabTitleBg,{left:Math.ceil((this.offsetWidth+6)*(this.getAttribute('data-indx')))},function(){
+                            tabOption.series[0].data[0].value+=10;
+                            tabOption.series[0].data[1].value+=20;
+                            tabOption.series[1].data[0].value+=10;
+                            tabOption.series[1].data[1].value+=20;
+                            if(checkFlag%2==1){
+                                mapOption.series[0].data=convertData(data1);
+                                chinaMap.setOption(mapOption);
+
+                            }else{
+                                chinaMap.setOption(option = {
+                                    title: {
+                                        text: ''
+                                    },
+                                    animationDurationUpdate: 1500,
+                                    animationEasingUpdate: 'quinticInOut',
+                                    series : [
+                                        {
+                                            type: 'graph',
+                                            layout: 'none',
+                                            // progressiveThreshold: 700,
+                                            // itemStyle:{
+                                                
+                                            // },
+                                            width:"80%",
+                                            // height:'80%',
+                                            data: data.nodes.map(function (node) {
+                                                return {
+                                                    x: node.x,
+                                                    y: node.y,
+                                                    id: node.id,
+                                                    name: node.label,
+                                                    symbolSize: node.size,
+                                                    itemStyle: {
+                                                        normal: {
+
+                                                            color: node.color,
+                                                            shadowColor:node.color,
+                                                            shadowBlur: 20
+                                                            // borderColor:node.color
+                                                            // borderWidth :'1'
+                                                        },
+                                                        emphasis:{
+                                                            color:node.color
+                                                        }
+                                                    }
+                                                };
+                                            }),
+                                            edges: data.edges.map(function (edge) {
+                                                return {
+                                                    source: edge.sourceID,
+                                                    target: edge.targetID
+                                                };
+                                            }),
+                                            
+                                            label: {
+                                                emphasis: {
+                                                    position: 'right',
+                                                    show: true
+                                                }
+                                            },
+                                            roam: true,
+                                            focusNodeAdjacency: true,
+                                            lineStyle: {
+                                                normal: {
+                                                    width: 0.4,
+                                                    curveness: 0.3,
+                                                    opacity:.7,
+                                                    color:'#0afed2'
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }, true);
+                            }
+                            tab.setOption(tabOption);
+                            axis.setOption(axisOption);
+                            worldcloud.setOption(wordCloudOption);
+                            barX.setOption(barXOption);
+                            barY.setOption(barYOption);
+                            
+                                
+                        });
+                        if(checkFlag>9){
+                            this.style.color='#555';
+                        }
+                    };
                     topRT.appendChild(createEl('全国红色预警'));
                     bottom3.appendChild(createEl('舆情网络来源'));
-                    bottom1.appendChild(createEl('全国舆情热点'));
+                    bottom1.appendChild(createEl('全球舆情热点'));
                     topRB.appendChild(createEl('网民热词'));
                 },500);
-                // axisOption
