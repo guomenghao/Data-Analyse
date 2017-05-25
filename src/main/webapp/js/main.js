@@ -1139,7 +1139,7 @@ wordCloudOption = {
                     },
                     yAxis: {
                         type: 'category',
-                        data: ['巴西','印尼','美国','印度','中国','世界人口(万)'],
+                        data: ['莱特币','以太坊','数字币','区块链','比特币','信息总量（条）'],
                         splitLine:{
                             show:false
                         },
@@ -1188,7 +1188,7 @@ wordCloudOption = {
                     },
                     xAxis: {
                         type: 'category',
-                        data: ['巴西','印尼','美国','印度','中国','世界人口(万)'],
+                        data: ['搜狐','凤凰','百度 ','头条','腾讯','新浪'],
                         splitLine:{
                             show:false
                         },

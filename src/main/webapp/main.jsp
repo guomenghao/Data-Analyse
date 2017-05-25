@@ -34,10 +34,10 @@
                         <div class="tabTitle">
                             <i></i>
                             <span data-indx='0'>全部</span>
-                            <span data-indx='1' data-type='china'>党政动态</span>
-                            <span data-indx='2'>社会主义</span>
-                            <span data-indx='3' data-type='china'>宣传动态</span>
-                            <span data-indx='4'>城市建设</span>
+                            <span data-indx='1' data-type='china'>股市行情</span>
+                            <span data-indx='2'>期货行情</span>
+                            <span data-indx='3' data-type='china'>区块链</span>
+                            <span data-indx='4'>数字币</span>
                         </div>
                         <div class="tabContent">
                             
@@ -67,11 +67,11 @@
                     </div>
                     <div class="bottom2Content">
                         <ul>
-                            <li><i>1</i>wq</li>
-                            <li><i>2</i>wq</li>
-                            <li><i>3</i>ww</li>
-                            <li><i>4</i>sad</li>
-                            <li><i>5</i>dsad</li>
+                            <li><i>1</i><a href="https://www.sosobtc.com/article/21184.html">2017共识大会：数字货币的跌宕起伏</a></li>
+                            <li><i>2</i><a href="https://www.sosobtc.com/article/21183.html">炒比特币的多数是年轻人？中国大妈更疯狂</a></li>
+                            <li><i>3</i><a href="https://www.sosobtc.com/article/21182.html">比特币带全体加密货币一起飞，多数创下新高</a></li>
+                            <li><i>4</i><a href="https://www.sosobtc.com/article/21181.html">比特币禁止不是好出路，排斥不如纳入监管</a></li>
+                            <li><i>5</i><a href="https://www.sosobtc.com/article/21180.html">多方亢奋难平复 短期风险或加大</a></li>
                         </ul>
                     </div>  
                 </div>
