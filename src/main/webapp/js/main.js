@@ -121,15 +121,18 @@ var checkFlag=0;
                                 io=true;
                             }
                         });
-                        startMove1(tabTitleBg,{left:Math.ceil((this.offsetWidth+6)*(this.getAttribute('data-indx')))},function(){
-                            tabOption.series[0].data[0].value+=10;
+                        for(var j=0;j<tabTitleSpan.length;j++){
+                            tabTitleSpan[j].style.color='#fff';
+                        }
+                        this.style.color="red";
+                        tabOption.series[0].data[0].value+=10;
                             tabOption.series[0].data[1].value+=20;
                             tabOption.series[1].data[0].value+=10;
                             tabOption.series[1].data[1].value+=20;
                             if(_this.getAttribute('data-type')=='china'){
                                 mapOption.series[0].data=convertData(data1);
                                 chinaMap.setOption(mapOption);
-
+                                chinaMap.resize();  
                             }else{
                                 chinaMap.setOption(option = {
                                     title: {
@@ -145,7 +148,7 @@ var checkFlag=0;
                                             // itemStyle:{
                                                 
                                             // },
-                                            width:"80%",
+                                            // width:"80%",
                                             // height:'80%',
                                             data: data.nodes.map(function (node) {
                                                 return {
@@ -201,8 +204,11 @@ var checkFlag=0;
                             worldcloud.setOption(wordCloudOption);
                             barX.setOption(barXOption);
                             barY.setOption(barYOption);
+                            chinaMap.resize();  
+                        // startMove1(tabTitleBg,{left:Math.ceil((this.offsetWidth+6)*(this.getAttribute('data-indx')))},function(){
+                            
                                 
-                        });
+                        // });
                     }
                 }
                 for(var i=0;i<bottom2P.length;i++){
@@ -238,8 +244,8 @@ var checkFlag=0;
                         {
                             name:'访问来源',
                             type:'pie',
-                            radius: ['40%', '50%'],
-                            center:['40%','50%'],
+                            radius: [7/tabContent.offsetWidth*1500+"%", 9/tabContent.offsetWidth*1500+"%"],
+                            center:['40%','40%'],
                             avoidLabelOverlap: false,
                             label: {
                                 normal: {
@@ -269,8 +275,8 @@ var checkFlag=0;
                         {
                             name:'访问来源',
                             type:'pie',
-                            radius: ['40%', '50%'],
-                            center:['75%','50%'],
+                            radius: [7/tabContent.offsetWidth*1500+"%", 9/tabContent.offsetWidth*1500+"%"],
+                            center:['75%','40%'],
                             avoidLabelOverlap: false,
                             label: {
                                 normal: {
@@ -792,7 +798,7 @@ mapOption = {
                         formatter: '{b}'
                     },
                     aspectScale:1,
-                    layoutCenter: ['50%', '50%'],
+                    // layoutCenter: ['50%', '50%'],
                      layoutSize: 650,
                     geo: {
                         map: 'china',
@@ -1441,3 +1447,12 @@ wordCloudOption = {
                     bottom1.appendChild(createEl('全球舆情热点'));
                     topRB.appendChild(createEl('网民热词'));
                 },500);
+                $(window).resize(function(){
+                    tab.resize();  
+                    axis.resize();    
+                    worldcloud.resize();    
+                    barX.resize();    
+                    barY.resize();    
+                    chinaMap.resize();    
+
+                 });
