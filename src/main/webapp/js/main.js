@@ -1454,5 +1454,11 @@ wordCloudOption = {
                     barX.resize();    
                     barY.resize();    
                     chinaMap.resize();    
+                    for(var i=0;i<b4Li.length;i++){
+                        b4Li[i].style.width=Math.floor(bottom4.offsetWidth/3)-10+'px';
+                        b4Li[i].style.marginLeft=Math.floor((bottom4.offsetWidth/3)*0.08)+'px';
+                        b4Li[i].style.overflow='hidden';
+                        b4Li[i].style.opacity='1';
 
+                     }
                  });
