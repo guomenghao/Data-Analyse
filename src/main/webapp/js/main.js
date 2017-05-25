@@ -86,6 +86,7 @@ var checkFlag=0;
                  for(var i=0;i<b4Li.length;i++){
                     b4Li[i].style.width=Math.floor(bottom4.offsetWidth/3)-10+'px';
                     b4Li[i].style.marginLeft=Math.floor((bottom4.offsetWidth/3)*0.08)+'px';
+                    b4Li[i].style.overflow='hidden';
                     b4Li[i].style.opacity='1';
 
                  }
@@ -972,7 +973,7 @@ wordCloudOption = {
     series: [{
         name: 'Google Trends',
         type: 'wordCloud',
-        size: ['80%', '80%'],
+        size: ['100%', '100%'],
         textRotation : [0, 45, 90, -45],
         textPadding: 0,
         autoSize: {
@@ -997,7 +998,7 @@ wordCloudOption = {
         },
         data: [
             {
-                name: "Sam S Club",
+                name: "比特币",
                 value: 10000,
                 itemStyle: {
                     normal: {
@@ -1006,98 +1007,53 @@ wordCloudOption = {
                 }
             },
             {
-                name: "Macys",
+                name: "区块链",
                 value: 6181,
                 itemStyle: createRandomItemStyle()
             },
             {
-                name: "Amy Schumer",
+                name: "数字币",
                 value: 4386,
                 itemStyle: createRandomItemStyle()
             },
             {
-                name: "Jurassic World",
+                name: "ICO",
                 value: 4055,
                 itemStyle: createRandomItemStyle()
             },
             {
-                name: "Charter Communications",
+                name: "莱特币",
                 value: 2467,
                 itemStyle: createRandomItemStyle()
             },
             {
-                name: "Chick Fil A",
+                name: "以太坊",
                 value: 2244,
                 itemStyle: createRandomItemStyle()
             },
             {
-                name: "Planet Fitness",
+                name: "监管政策",
                 value: 1898,
                 itemStyle: createRandomItemStyle()
             },
             {
-                name: "Pitch Perfect",
+                name: "是否持久",
                 value: 1484,
                 itemStyle: createRandomItemStyle()
             },
             {
-                name: "Express",
+                name: "泡沫？",
                 value: 1112,
                 itemStyle: createRandomItemStyle()
             },
             {
-                name: "Home",
+                name: "虚拟币",
                 value: 965,
                 itemStyle: createRandomItemStyle()
             },
             {
-                name: "Johnny Depp",
+                name: "翻倍增长",
                 value: 847,
-                itemStyle: createRandomItemStyle()
-            },
-            {
-                name: "Lena Dunham",
-                value: 582,
-                itemStyle: createRandomItemStyle()
-            },
-            {
-                name: "Lewis Hamilton",
-                value: 555,
-                itemStyle: createRandomItemStyle()
-            },
-            {
-                name: "KXAN",
-                value: 550,
-                itemStyle: createRandomItemStyle()
-            },
-            {
-                name: "Mary Ellen Mark",
-                value: 462,
-                itemStyle: createRandomItemStyle()
-            },
-            {
-                name: "Farrah Abraham",
-                value: 366,
-                itemStyle: createRandomItemStyle()
-            },
-            {
-                name: "Rita Ora",
-                value: 360,
-                itemStyle: createRandomItemStyle()
-            },
-            {
-                name: "Serena Williams",
-                value: 282,
-                itemStyle: createRandomItemStyle()
-            },
-            {
-                name: "NCAA baseball tournament",
-                value: 273,
-                itemStyle: createRandomItemStyle()
-            },
-            {
-                name: "Point Break",
-                value: 265,
                 itemStyle: createRandomItemStyle()
             }
         ]
