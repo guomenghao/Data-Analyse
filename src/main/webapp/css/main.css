@@ -264,11 +264,13 @@ body>div.content{
 
 }
 .b4T{
-	width:80%;
-	height:1rem;
-	margin:.2rem auto;
-	background:#03cda8;
-
+	width: 80%;
+    height: 1rem;
+    margin: .2rem auto;
+    font-size: 12px;
+    background: #03cda8;
+    line-height: 1rem;
+    text-align: center;
 }
 .b4C{
 	word-break:break-all;
