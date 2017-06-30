@@ -28,9 +28,9 @@
 	 
 	<!-- datasource Oracle dev03.oicp.net:31521-->
 	<entry key="dataSource.driverClassName">oracle.jdbc.driver.OracleDriver</entry>
-	<entry key="dataSource.url">jdbc:oracle:thin:@125.70.116.84:31521:marketdb</entry>
+	<entry key="dataSource.url">jdbc:oracle:thin:@123.207.85.17:1521:orcl</entry>
 	<entry key="dataSource.username">sys_v3_dev</entry>
-	<entry key="dataSource.password">1234567890</entry>
+	<entry key="dataSource.password">tydic2016</entry>
 	
 	<!-- <entry key="dataSource.driverClassName">com.mysql.jdbc.Driver</entry>
 	<entry key="dataSource.url">jdbc:mysql://123.207.242.245:3306/data_analyse?useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true</entry>
